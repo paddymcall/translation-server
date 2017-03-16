@@ -11,7 +11,8 @@ RUN bash fetch_sdk \
 	&& bash build.sh \
 	&& rm -rf firefox-sdk \
 	&& rm -rf /opt/translation-server/modules/zotero/translators \
-	&& git clone https://github.com/zotero/translators /opt/translation-server/modules/zotero/translators
+	# && git clone https://github.com/zotero/translators /opt/translation-server/modules/zotero/translators
+	&& git clone https://github.com/paddymcall/translators /opt/translation-server/modules/zotero/translators
 
 EXPOSE 1969
 
