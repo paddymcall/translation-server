@@ -1,0 +1,16 @@
+#+TITLE: Docker Zotero Translation Server for EAST
+
+To see the differences, extract the content from the image like this:
+
+#+BEGIN_SRC bash
+  id=$(docker create translation-server)
+  docker cp $id:/opt/translation-server - > /tmp/trl-server-docker.tar
+  docker rm -v $id
+#+END_SRC
+
+
+The archive ~/tmp/trl-server-docker.tar~ will then contain the
+~./build/~ directory, which you can diff against the standard
+(non-dockerized) ~./build/~.  You can also run the translation server
+(on a sufficiently similar system) from the archive, with
+~./build/run_translation-server.sh~.
