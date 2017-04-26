@@ -46,7 +46,10 @@ const xpcomFiles = [
 	'connector/translator',
 	'connector/cachedTypes',
 	'connector/typeSchemaData',
-	'hacks'
+	'hacks',
+	'citeproc-prereqs',
+	'citeproc',
+	'data/item',
 ];
 
 var Zotero = function() {},
@@ -100,6 +103,11 @@ Zotero.RDF = {Zotero:Zotero};
 for (var i=0; i<rdfXpcomFiles.length; i++) {
 	subscriptLoader.loadSubScript("chrome://translation-server/content/" + rdfXpcomFiles[i] + ".js", Zotero.RDF);
 }
+
+// Load CiteProc into Zotero.CiteProc namespace
+Zotero.CiteProc = {Zotero:Zotero};
+subscriptLoader.loadSubScript("chrome://translation-server/content/citeproc-prereqs.js", Zotero.CiteProc);
+subscriptLoader.loadSubScript("chrome://translation-server/content/citeproc.js", Zotero.CiteProc);
 
 // add connector-related properties
 Zotero.isConnector = true;

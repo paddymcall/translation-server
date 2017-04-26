@@ -1,5 +1,191 @@
 #+TITLE: Docker Zotero Translation Server for EAST
 
+This is an adaptation of [[https://github.com/zotero/translation-server][zotero/translation-server]] for [[http://east.uni-hd.de][EAST]].
+
+The main differences are a more specialized MODS translator and the
+possibility to export csljson (see [[./modules/zotero/translators/CSL%20JSON.js][./modules/zotero/translators/CSL
+JSON.js]]).  To do this, the following files have to be edited:
+
+1) file:./build.sh: copy the additional files into the build environment
+2) file:./src/init.js: add csl json exporter and load dependencies from xpcom
+3) file:./src/server_translation.js: add csljson translator and content type
+
+In addition, we adjust file:./Dockerfile to load EAST’s Zotero
+translators in the docker image, currently at
+https://github.com/paddymcall/translators.  If running the standard
+~./build/run_translation-server.sh~, take care to adjust
+[[file:config.js][translation-server.translatorsDirectory]] to point to the translators
+you wish to use.
+
+* Usage
+
+#+BEGIN_SRC bash
+docker build -t east-translation-server -f Dockerfile .
+docker run --rm -p 1969:1969 --name east-translation-server-container east-translation-server
+#+END_SRC
+
+And then try to translate something:
+
+#+BEGIN_SRC restclient :results raw value
+  POST http://127.0.0.1:1969/web
+  Content-Type: application/json
+
+  {"url":"http://www.tandfonline.com/doi/abs/10.1080/15424060903167229","sessionid":"abc123"}
+#+END_SRC
+
+With ~curl~:
+
+#+NAME: zotero-json
+#+BEGIN_SRC bash :results raw value
+  curl -H 'Content-Type: application/json' -XPOST  \
+       'http://127.0.0.1:1969/web' \
+       -d '{"url":"http://www.tandfonline.com/doi/abs/10.1080/15424060903167229","sessionid":"abc123"}'
+#+END_SRC
+
+#+BEGIN_SRC json
+  [
+    {
+      "itemKey": "N78ZRCBT",
+      "itemVersion": 0,
+      "itemType": "journalArticle",
+      "creators": [
+	{
+          "firstName": "Jessica",
+          "lastName": "Trinoskey",
+          "creatorType": "author"
+	},
+	{
+          "firstName": "Frances A.",
+          "lastName": "Brahmi",
+          "creatorType": "author"
+	},
+	{
+          "firstName": "Carole",
+          "lastName": "Gall",
+          "creatorType": "author"
+	}
+      ],
+      "tags": [
+	{
+          "tag": "citation management software",
+          "type": 1
+	},
+	{
+          "tag": "citation styles",
+          "type": 1
+	},
+	{
+          "tag": "EndNote",
+          "type": 1
+	},
+	{
+          "tag": "tagging",
+          "type": 1
+	},
+	{
+          "tag": "Zotero",
+          "type": 1
+	}
+      ],
+      "title": "Zotero: A Product Review",
+      "publicationTitle": "Journal of Electronic Resources in Medical Libraries",
+      "volume": "6",
+      "issue": "3",
+      "pages": "224-229",
+      "date": "September 9, 2009",
+      "DOI": "10.1080/15424060903167229",
+      "url": "http://dx.doi.org/10.1080/15424060903167229",
+      "abstractNote": "Zotero is a free and open source Firefox extension that exists within the Web browser and allows one to collect, manage, store, and cite resources in a single location. 1 Zotero automatically imports citation information from a number of sources, including nonsubscription, newspaper, and commercial Web sites, and Web-based databases such as PubMed and MedlinePlus. Zotero offers more options for note taking than the better-known citation management system EndNote. Sixteen citation styles are available when Zotero is initially downloaded, with many more freely available. Users can install a plug-in that allows Zotero to integrate with Microsoft Word. Even though Zotero does not have an on-demand customer support service, its Web site offers a wealth of information for users. The authors highly recommend Zotero.",
+      "ISSN": "1542-4065",
+      "libraryCatalog": "Taylor and Francis+NEJM",
+      "accessDate": "CURRENT_TIMESTAMP",
+      "shortTitle": "Zotero"
+    }
+  ]
+#+END_SRC
+
+#+NAME: zotero-bibtex
+#+BEGIN_SRC bash :results raw value :var data=zotero-json
+  curl -H 'Content-Type: application/json' -XPOST  \
+       'http://127.0.0.1:1969/export?format=biblatex' \
+       -d "${data}"
+#+END_SRC
+
+#+BEGIN_SRC bibtex
+@article{trinoskey_zotero:_2009,
+	title = {Zotero: A Product Review},
+	volume = {6},
+	issn = {1542-4065},
+	url = {http://dx.doi.org/10.1080/15424060903167229},
+	doi = {10.1080/15424060903167229},
+	shorttitle = {Zotero},
+	abstract = {Zotero is a free and open source Firefox extension that exists within the Web browser and allows one to collect, manage, store, and cite resources in a single location. 1 Zotero automatically imports citation information from a number of sources, including nonsubscription, newspaper, and commercial Web sites, and Web-based databases such as {PubMed} and {MedlinePlus}. Zotero offers more options for note taking than the better-known citation management system {EndNote}. Sixteen citation styles are available when Zotero is initially downloaded, with many more freely available. Users can install a plug-in that allows Zotero to integrate with Microsoft Word. Even though Zotero does not have an on-demand customer support service, its Web site offers a wealth of information for users. The authors highly recommend Zotero.},
+	pages = {224--229},
+	number = {3},
+	journaltitle = {Journal of Electronic Resources in Medical Libraries},
+	author = {Trinoskey, Jessica and Brahmi, Frances A. and Gall, Carole},
+	date = {2009-09-09},
+	keywords = {citation management software, citation styles, {EndNote}, tagging, Zotero}
+}
+#+END_SRC
+
+
+And an example of translation to csljson:
+
+#+NAME: zotero-csljson
+#+BEGIN_SRC bash :results replace raw value :var data=zotero-json
+  curl -H 'Content-Type: application/json' -XPOST  \
+	 'http://127.0.0.1:1969/export?format=csljson' \
+	 -d "${data}"
+#+END_SRC
+
+#+BEGIN_SRC json
+[
+	{
+		"type": "article-journal",
+		"title": "Zotero: A Product Review",
+		"container-title": "Journal of Electronic Resources in Medical Libraries",
+		"page": "224-229",
+		"volume": "6",
+		"issue": "3",
+		"source": "Taylor and Francis+NEJM",
+		"abstract": "Zotero is a free and open source Firefox extension that exists within the Web browser and allows one to collect, manage, store, and cite resources in a single location. 1 Zotero automatically imports citation information from a number of sources, including nonsubscription, newspaper, and commercial Web sites, and Web-based databases such as PubMed and MedlinePlus. Zotero offers more options for note taking than the better-known citation management system EndNote. Sixteen citation styles are available when Zotero is initially downloaded, with many more freely available. Users can install a plug-in that allows Zotero to integrate with Microsoft Word. Even though Zotero does not have an on-demand customer support service, its Web site offers a wealth of information for users. The authors highly recommend Zotero.",
+		"URL": "http://dx.doi.org/10.1080/15424060903167229",
+		"DOI": "10.1080/15424060903167229",
+		"ISSN": "1542-4065",
+		"shortTitle": "Zotero",
+		"author": [
+			{
+				"family": "Trinoskey",
+				"given": "Jessica"
+			},
+			{
+				"family": "Brahmi",
+				"given": "Frances A."
+			},
+			{
+				"family": "Gall",
+				"given": "Carole"
+			}
+		],
+		"issued": {
+			"date-parts": [
+				[
+					"2009",
+					9,
+					9
+				]
+			]
+		},
+		"accessed": {
+			"literal": "CURRENT_TIMESTAMP"
+		}
+	}
+]
+#+END_SRC
+
+* Differences
+
 To see the differences, extract the content from the image like this:
 
 #+BEGIN_SRC bash
@@ -7,7 +193,6 @@ To see the differences, extract the content from the image like this:
   docker cp $id:/opt/translation-server - > /tmp/trl-server-docker.tar
   docker rm -v $id
 #+END_SRC
-
 
 The archive ~/tmp/trl-server-docker.tar~ will then contain the
 ~./build/~ directory, which you can diff against the standard

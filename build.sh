@@ -57,6 +57,9 @@ cp -R "$SCRIPT_DIR/src/"* \
 	"$XPCOMDIR/utilities.js" \
 	"$XPCOMDIR/utilities_translate.js" \
 	"$XPCOMDIR/xregexp" \
+	"$XPCOMDIR/data" \
+	"$XPCOMDIR/citeproc.js" \
+	"$XPCOMDIR/citeproc-prereqs.js" \
 	"$EXTENSIONDIR/chrome/content/zotero/tools/testTranslators/translatorTester.js" \
 	"$BUILDDIR/translation-server"
 
