@@ -40,7 +40,8 @@ const SERVER_FORMATS = {
 	"rdf_zotero":"14763d24-8ba0-45df-8f52-b8d1108e7ac9",
 	"ris":"32d59d2d-b65a-4da4-b0a3-bdd3cfb979e7",
 	"tei":"032ae9b7-ab90-9205-a479-baf81f49184a",
-	"wikipedia":"3f50aaac-7acc-4350-acd0-59cb77faf620"
+	"wikipedia":"3f50aaac-7acc-4350-acd0-59cb77faf620",
+	"csljson":"bc03b4fe-436d-4a1f-ba59-de4d2d7a63f7"
 };
 
 // Content types for export translation
@@ -56,7 +57,8 @@ const SERVER_CONTENT_TYPES = {
 	"rdf_zotero":"application/rdf+xml",
 	"ris":"application/x-research-info-systems",
 	"wikipedia":"text/x-wiki",
-	"tei":"text/xml"
+	"tei":"text/xml",
+	"csljson":"application/json"
 };
 
 Components.utils.import("resource://gre/modules/Services.jsm");
