@@ -184,6 +184,76 @@ And an example of translation to csljson:
 ]
 #+END_SRC
 
+
+* Testing
+
+Tests are generally run like this (for a GUI method, see
+https://github.com/zotero/scaffold):
+
+#+BEGIN_SRC bash
+SKIP_TRANSLATOR_UPDATE=1 ./build/run_translation-server.sh -test /tmp/results.json
+#+END_SRC
+
+This runs all the tests defined for all the translators in the
+directory that [[file:config.js][translation-server.translatorsDirectory]] points at.
+
+To analyze the tests, you can use https://stedolan.github.io/jq/:
+
+** Show overview (simplest solution)
+
+#+BEGIN_SRC bash :results output
+  jq -r '.results[] | .output' /tmp/results.json
+#+END_SRC
+
+
+** Find failed tests
+
+#+BEGIN_SRC bash
+  jq '.results[] | { translatorID, type, failed }' /tmp/results.json
+#+END_SRC
+
+These are tests that didn’t complete (as far as I understand), not
+tests that ran but did not match the expectations.
+
+** List tests according to success
+
+#+BEGIN_SRC bash
+jq '[.results[] | { translatorID, type, okay: [.succeeded[]?.message ] }]' /tmp/results.json
+#+END_SRC
+
+** Find problematic tests
+
+#+BEGIN_SRC bash :results raw value
+jq '.results[] | { translatorID, type, problems: [.unknown[]?.message] }' /tmp/results.json
+#+END_SRC
+
+*** With details
+
+#+BEGIN_SRC bash
+jq '.results[] | { translatorID, type, problems: [.unknown[]?.message], expected: .unknown[]?.items, got: .unknown[]?.itemsReturned, source: .unknown[]?.input }' /tmp/results.json
+#+END_SRC
+
+#+BEGIN_SRC bash :results raw value
+jq '[.results[] | select(.unknown | length != 0) | { translatorID, type, problems: [ .unknown[] | { got: .items, expected: .itemsReturned, source: .input} ] }]' /tmp/results.json 
+#+END_SRC
+
+Or also:
+
+#+BEGIN_SRC bash :results raw value
+jq '[.results[] | select(.unknown | length != 0) | { translatorID, type, problems: .unknown }]' /tmp/results.json
+#+END_SRC
+
+
+
+
+
+** Find test results for a particular translator
+
+#+BEGIN_SRC bash
+jq '.results[] | select(.translatorID | contains("some-translatorID"))' /tmp/results.json
+jq '.results[] | select(.label | contains("MODS"))' /tmp/results.json
+#+END_SRC
+
 * Differences
 
 To see the differences, extract the content from the image like this:
