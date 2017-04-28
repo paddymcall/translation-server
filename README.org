@@ -194,8 +194,8 @@ https://github.com/zotero/scaffold):
 SKIP_TRANSLATOR_UPDATE=1 ./build/run_translation-server.sh -test /tmp/results.json
 #+END_SRC
 
-This runs all the tests defined for all the translators in the
-directory that [[file:config.js][translation-server.translatorsDirectory]] points at.
+This runs all the tests defined for the translators in the directory
+that [[file:config.js][translation-server.translatorsDirectory]] points at.
 
 To analyze the tests, you can use https://stedolan.github.io/jq/:
 
@@ -242,10 +242,6 @@ Or also:
 #+BEGIN_SRC bash :results raw value
 jq '[.results[] | select(.unknown | length != 0) | { translatorID, type, problems: .unknown }]' /tmp/results.json
 #+END_SRC
-
-
-
-
 
 ** Find test results for a particular translator
 
