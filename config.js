@@ -1,4 +1,4 @@
-pref("translation-server.translatorsDirectory", "");
+pref("translation-server.translatorsDirectory", "/home/beta/webstuff/EAST_helpers/EAST_zotero_translators");
 pref("translation-server.httpServer.port", "1969");
 pref("translation-server.debug.log", true);
 pref("translation-server.debug.time", true);

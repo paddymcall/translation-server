@@ -33,7 +33,7 @@ const SERVER_FORMATS = {
 	"biblatex":"b6e39b57-8942-4d11-8259-342c46ce395f",
 	"bookmarks":"4e7119e0-02be-4848-86ef-79a64185aad8",
 	"coins":"05d07af9-105a-4572-99f6-a8e231c0daef",
-	"mods":"0e2235e7-babf-413c-9acf-f27cce5f059c",
+	"mods":"e99d5b50-2a78-11e7-83f9-df137a87aeb9",
 	"refer":"881f60f2-0802-411a-9228-ce5f47b64c7d",
 	"rdf_bibliontology":"14763d25-8ba0-45df-8f52-b8d1108e7ac9",
 	"rdf_dc":"6e372642-ed9d-4934-b5d1-c11ac758ebb7",
