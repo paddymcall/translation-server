@@ -185,6 +185,101 @@ And an example of translation to csljson:
 #+END_SRC
 
 
+** Second example
+
+#+NAME: zotero-json2
+#+BEGIN_SRC bash :results replace raw value
+  curl -H 'Content-Type: application/json' -XPOST  \
+       'http://127.0.0.1:1969/web' \
+       -d '{"url":"http://www.worldcat.org/oclc/247991192","sessionid":"abc123"}'
+#+END_SRC
+
+#+RESULTS: zotero-json2
+[{"itemKey":"T64JEJ4X","itemVersion":0,"itemType":"book","creators":[{"name":"Prajñākaragupta","creatorType":"author"},{"firstName":"Shigeaki","lastName":"Watanabe","creatorType":"author"}],"tags":[],"libraryCatalog":"Open WorldCat","language":"English","title":"Sanskrit manuscripts of Prajñākaragupta's Pramāṇavārttikabhāṣyam","publisher":"Bihar Research Society [u.a.","place":"Patna","date":"1998","extra":"OCLC: 247991192"}]
+
+
+
+#+BEGIN_SRC bash :results replace raw value :var data=zotero-json2
+  curl -H 'Content-Type: application/json' -XPOST \
+       'http://127.0.0.1:1969/export?format=csljson' \
+       -d "${data}"
+#+END_SRC
+
+#+RESULTS:
+[
+	{
+		"type": "book",
+		"title": "Sanskrit manuscripts of Prajñākaragupta's Pramāṇavārttikabhāṣyam",
+		"publisher": "Bihar Research Society [u.a.",
+		"publisher-place": "Patna",
+		"source": "Open WorldCat",
+		"event-place": "Patna",
+		"note": "OCLC: 247991192",
+		"language": "English",
+		"author": [
+			{
+				"family": "Prajñākaragupta",
+				"given": ""
+			},
+			{
+				"family": "Watanabe",
+				"given": "Shigeaki"
+			}
+		],
+		"issued": {
+			"date-parts": [
+				[
+					"1998"
+				]
+			]
+		},
+		"keyword": ""
+	}
+]
+[
+	{
+		"type": "book",
+		"title": "Sanskrit manuscripts of Prajñākaragupta's Pramāṇavārttikabhāṣyam",
+		"publisher": "Bihar Research Society [u.a.",
+		"publisher-place": "Patna",
+		"source": "Open WorldCat",
+		"event-place": "Patna",
+		"note": "OCLC: 247991192",
+		"language": "English",
+		"author": [
+			{
+				"family": "Prajñākaragupta",
+				"given": ""
+			},
+			{
+				"family": "Watanabe",
+				"given": "Shigeaki"
+			}
+		],
+		"issued": {
+			"date-parts": [
+				[
+					"1998"
+				]
+			]
+		},
+		"keyword": ""
+	}
+]
+
+*** mods
+
+#+BEGIN_SRC bash :results replace raw value :var data=zotero-json2
+  curl -H 'Content-Type: application/json' -XPOST \
+       'http://127.0.0.1:1969/export?format=mods' \
+       -d "${data}"
+#+END_SRC
+
+#+RESULTS:
+<?xml version="1.0"?>
+<modsCollection xmlns="http://www.loc.gov/mods/v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-2.xsd"><mods><titleInfo><title>Sanskrit manuscripts of Prajñākaragupta's Pramāṇavārttikabhāṣyam</title></titleInfo><typeOfResource>text</typeOfResource><genre authority="local">book</genre><genre authority="marcgt">book</genre><name type="corporate"><namePart>Prajñākaragupta</namePart><role><roleTerm type="code" authority="marcrelator">aut</roleTerm></role></name><name type="personal"><namePart type="family">Watanabe</namePart><namePart type="given">Shigeaki</namePart><role><roleTerm type="code" authority="marcrelator">aut</roleTerm></role></name><originInfo><place><placeTerm type="text">Patna</placeTerm></place><publisher>Bihar Research Society [u.a.</publisher><copyrightDate>1998</copyrightDate><issuance>monographic</issuance></originInfo><language><languageTerm type="text">English</languageTerm></language><note>OCLC: 247991192</note><recordInfo><recordContentSource>Open WorldCat</recordContentSource></recordInfo></mods></modsCollection>
+
+
 * Testing
 
 Tests are generally run like this (for a GUI method, see

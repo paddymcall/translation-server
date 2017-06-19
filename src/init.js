@@ -49,7 +49,7 @@ const xpcomFiles = [
 	'hacks',
 	'citeproc-prereqs',
 	'citeproc',
-	'data/item',
+	'data/item'
 ];
 
 var Zotero = function() {},
@@ -111,6 +111,10 @@ subscriptLoader.loadSubScript("chrome://translation-server/content/citeproc.js",
 
 // add connector-related properties
 Zotero.isConnector = true;
+
+// load notes
+// Zotero.Notes = {Zotero:Zotero};
+
 
 var mainThread = Components.classes["@mozilla.org/thread-manager;1"]
 		.getService(Components.interfaces.nsIThreadManager).currentThread;
