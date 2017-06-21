@@ -280,6 +280,68 @@ And an example of translation to csljson:
 <modsCollection xmlns="http://www.loc.gov/mods/v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-2.xsd"><mods><titleInfo><title>Sanskrit manuscripts of Prajñākaragupta's Pramāṇavārttikabhāṣyam</title></titleInfo><typeOfResource>text</typeOfResource><genre authority="local">book</genre><genre authority="marcgt">book</genre><name type="corporate"><namePart>Prajñākaragupta</namePart><role><roleTerm type="code" authority="marcrelator">aut</roleTerm></role></name><name type="personal"><namePart type="family">Watanabe</namePart><namePart type="given">Shigeaki</namePart><role><roleTerm type="code" authority="marcrelator">aut</roleTerm></role></name><originInfo><place><placeTerm type="text">Patna</placeTerm></place><publisher>Bihar Research Society [u.a.</publisher><copyrightDate>1998</copyrightDate><issuance>monographic</issuance></originInfo><language><languageTerm type="text">English</languageTerm></language><note>OCLC: 247991192</note><recordInfo><recordContentSource>Open WorldCat</recordContentSource></recordInfo></mods></modsCollection>
 
 
+** Importing (turning something into zoterojson)
+
+#+BEGIN_SRC restclient
+  POST http://127.0.0.1:1987/import
+  Content-Type: application/json
+
+  [
+    {
+      "type": "article-journal",
+      "title": "\\\"Chishikiron kettaku\\\" (Pram\ā\ṇavini\ścaya) daisan sh\ō (tasha no tame no suiron\\n    sh\ō): wayaku kenky\ū ad vv. 64-67 [*Pram\ā\ṇavini\ścaya III: A Japanese translation and study of vv. 64-67 par\ārth\ānum\āna]",
+      "container-title": "T\ōy\ō no Shis\ō to Sh\ūky\ū",
+      "page": "1-33",
+      "volume": "6",
+      "language": "ja-JP",
+      "author": [
+	{
+          "family": "Iwata",
+          "given": "Takashi"
+	}
+      ],
+      "issued": {
+	"date-parts": [
+          [
+            "1989"
+          ]
+	]
+      },
+      "keyword": ""
+    }
+  ]
+#+END_SRC
+
+*** Often helps to see what translators expect as input
+
+ #+BEGIN_SRC restclient
+   POST http://127.0.0.1:1987/export?format=csljson
+   Content-Type: application/json
+
+   [
+       {
+           "volume": "6",
+           "publicationTitle": "T\\u014dy\\u014d no Shis\\u014d to Sh\\u016bky\\u016b",
+           "creators": [
+               {
+                   "lastName": "Iwata",
+                   "firstName": "Takashi",
+                   "creatorType": "author"
+               }
+           ],
+           "pages": "1-33",
+           "tags": [],
+           "title": "\\\"Chishikiron kettaku\\\" (Pram\\u0101\\u1e47avini\\u015bcaya) daisan sh\\u014d (tasha no tame no suiron\\n    sh\\u014d): wayaku kenky\\u016b ad vv. 64-67 [*Pram\\u0101\\u1e47avini\\u015bcaya III: A Japanese translation and study of vv. 64-67 par\\u0101rth\\u0101num\\u0101na]",
+           "itemType": "journalArticle",
+           "itemVersion": 0,
+           "date": "1989",
+           "itemKey": "V4ADMJB8",
+           "language": "ja-JP"
+       }
+   ]
+ #+END_SRC
+
+
 * Testing
 
 Tests are generally run like this (for a GUI method, see
